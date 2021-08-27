@@ -1,0 +1,97 @@
+specVersion: 0.0.1
+description: Magick for snek
+repository: ''
+schema: ./schema.graphql
+network:
+  endpoint: ws://docker.for.mac.localhost:9988
+  types: {
+    "AssetPair": {
+      "asset_in": "AssetId",
+      "asset_out": "AssetId"
+    },
+    "Amount": "i128",
+    "AmountOf": "Amount",
+    "Address": "AccountId",
+    "AssetNativeLocation": "u8",
+    "OrmlAccountData": {
+      "free": "Balance",
+      "frozen": "Balance",
+      "reserved": "Balance"
+    },
+    "Fee": {
+      "numerator": "u32",
+      "denominator": "u32"
+    },
+    "BalanceInfo": {
+      "amount": "Balance",
+      "assetId": "AssetId"
+    },
+    "Chain": {
+      "genesisHash": "Vec<u8>",
+      "lastBlockHash": "Vec<u8>"
+    },
+    "CurrencyId": "AssetId",
+    "CurrencyIdOf": "AssetId",
+    "Intention": {
+      "who": "AccountId",
+      "asset_sell": "AssetId",
+      "asset_buy": "AssetId",
+      "amount": "Balance",
+      "discount": "bool",
+      "sell_or_buy": "IntentionType"
+    },
+    "IntentionId": "Hash",
+    "IntentionType": {
+      "_enum": ["SELL", "BUY"]
+    },
+    "LookupSource": "AccountId",
+    "Price": "Balance",
+    "ClassId": "u64",
+    "TokenId": "u64",
+    "ClassData": {
+      "is_pool": "bool"
+    },
+    "TokenData": {
+      "locked": "bool",
+      "emote": "Vec<u8>"
+    },
+    "CID": "Vec<u8>",
+    "ClassInfo": {
+      "metadata": "Vec<u8>",
+      "total_issuance": "TokenId",
+      "owner": "AccountId",
+      "data": "ClassData"
+    },
+    "TokenInfo": {
+      "metadata": "Vec<u8>",
+      "owner": "AccountId",
+      "data": "TokenData"
+    },
+    "ClassInfoOf": "ClassInfo",
+    "TokenInfoOf": "TokenInfo",
+    "ClassIdOf": "ClassId",
+    "TokenIdOf": "TokenId",
+    "OrderedSet": "Vec<AssetId>",
+    "VestingSchedule": {
+      "start": "BlockNumber",
+      "period": "BlockNumber",
+      "period_count": "u32",
+      "per_period": "Compact<Balance>"
+    },
+    "VestingScheduleOf": "VestingSchedule",
+    "PoolId": "AccountId"
+  }
+definitions:
+  mapping: &mymapping
+    handlers:
+      - handler: handleCreateCollection
+        kind: substrate/CallHandler
+        filter:
+            module: nft
+            method: createClass
+            success: true
+dataSources:
+  - name: main
+    kind: substrate/Runtime
+    startBlock: 1
+    mapping: *mymapping # can reuse or change
