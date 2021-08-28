@@ -2,7 +2,8 @@ import { Call as TCall } from "@polkadot/types/interfaces";
 import { EventRecord, Event } from '@polkadot/types/interfaces';
 import { SubstrateExtrinsic } from "@subql/types";
 import { Codec } from '@polkadot/types/types';
-import { BasicExtrinsicData, CollectionData } from './types';
+import { BasicExtrinsicData, Collection, Token } from './types';
+import { isCreateCollection, isCreateToken, isTokenClassCreated, isTokenMinted } from './helpers';
 
 export const log = (title: string, arg: any) => logger.info(`[${title}] ${JSON.stringify(arg, null, 2)}` )
 
@@ -19,16 +20,10 @@ const getCollectionEvents = (records: EventRecord[]): string | undefined => {
   return getEvents(records, isTokenClassCreated)[1];
 }
 
-const isTokenClassCreated = ({ event }:EventRecord): boolean => matchEvent(event, 'TokenClassCreated', 'nft');
-
-export const matchEvent = (event: Event, method: string, section: string): boolean => {
-  return event.method.toString() === method && event.section.toString() === section;
+const getTokenEvents = (records: EventRecord[]): string[] => {
+  return getEvents(records, isTokenMinted);
 }
 
-export const isCreateCollection = (call: TCall): boolean => isExtrinsic(call, "createClass", "nft");
-export const isCreateToken = (call: TCall): boolean => isExtrinsic(call, "mint", "nft");
-
-export const isExtrinsic = (call: TCall, method: string, section: string): boolean => call.section === section && call.method === method
 
 export const getArgs = (args: Codec[]): string[] => {
   // logger.info(`getArgs ${args.toString()}`)
@@ -51,7 +46,7 @@ export const getBasicData = (extrinsic: SubstrateExtrinsic): BasicExtrinsicData 
   }
 }
 
-export const processCollection = (extrinsic: SubstrateExtrinsic): CollectionData => {
+export const processCollection = (extrinsic: SubstrateExtrinsic): Collection => {
   if (!isCreateCollection(extrinsic.extrinsic.method as TCall)) {
     logger.error(`[COLLECTION] ${extrinsic.extrinsic.method.toString()} is not a create collection`);
     return;
@@ -70,7 +65,7 @@ export const processCollection = (extrinsic: SubstrateExtrinsic): CollectionData
 }
 
 
-export const processToken = (extrinsic: SubstrateExtrinsic): CollectionData => {
+export const processToken = (extrinsic: SubstrateExtrinsic): Token => {
   if (!isCreateToken(extrinsic.extrinsic.method as TCall)) {
     logger.error(`[TOKEN] ${extrinsic.extrinsic.method.toString()} is not a create NFT`);
     return;
@@ -78,12 +73,13 @@ export const processToken = (extrinsic: SubstrateExtrinsic): CollectionData => {
 
   const data = getBasicData(extrinsic);
   const args = getArgs(extrinsic.extrinsic.args);
-  const id = getCollectionEvents(extrinsic.events);
+  const events = getTokenEvents(extrinsic.events);
 
   return {
     ...data,
-    id,
-    metadata: args[0],
+    id: events[2],
+    metadata: args[1],
+    collectionId: args[0],
   }
 
 }

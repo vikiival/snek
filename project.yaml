@@ -90,6 +90,12 @@ definitions:
             module: nft
             method: createClass
             success: true
+      - handler: handleCreateToken
+        kind: substrate/CallHandler
+        filter:
+            module: nft
+            method: mint
+            success: true
 dataSources:
   - name: main
     kind: substrate/Runtime

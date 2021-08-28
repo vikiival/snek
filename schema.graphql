@@ -1,20 +1,21 @@
 type CollectionEntity @entity {
   id: ID!
-  issuer: String
-  currentOwner: String
+  issuer: String!
+  currentOwner: String!
   data: ClassData
   metadata: String
   nfts: [NFTEntity] @derivedFrom(field: "collection")
   blockNumber: BigInt
+  burned: Boolean!
 }
 
 type NFTEntity @entity {
   id: ID!
-  issuer: String
-  currentOwner: String
+  issuer: String!
+  currentOwner: String!
   data: TokenData
   metadata: String
-  burned: Boolean
+  burned: Boolean!
   collection: CollectionEntity!
   blockNumber: BigInt
   events: [Event]

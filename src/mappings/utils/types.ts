@@ -4,7 +4,13 @@ export interface BasicExtrinsicData {
   timestamp: Date;
 }
 
-export interface CollectionData extends BasicExtrinsicData {
+export interface Collection extends BasicExtrinsicData {
   metadata: string;
   id: string;
+}
+
+export interface Token extends Collection {
+  metadata: string;
+  id: string;
+  collectionId: string;
 }
