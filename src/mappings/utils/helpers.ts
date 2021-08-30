@@ -11,7 +11,16 @@ export const matchEvent = (
   )
 }
 
+export function exists<T>(entity: T | undefined): boolean {
+  return !!entity
+}
+
 export const createTokenId = (collection: string, id: string) => `${collection}-${id}`
+
+export const tokenIdOf = (collectionAndId: [string, string] | string): string => {
+  const [collection, id] = Array.isArray(collectionAndId) ? collectionAndId : collectionAndId.split(',')
+  return createTokenId(collection, id)
+}
 
 export const isTokenClassCreated = ({ event }: EventRecord): boolean =>
   matchEvent(event, 'TokenClassCreated', 'nft')

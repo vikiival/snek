@@ -14,3 +14,10 @@ export interface Token extends Collection {
   id: string;
   collectionId: string;
 }
+
+export interface Interaction extends BasicExtrinsicData {
+  id: string;
+  value: string;
+}
+
+export type Some<T> = T | undefined;

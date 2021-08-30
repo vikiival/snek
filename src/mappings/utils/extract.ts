@@ -2,8 +2,8 @@ import { Call as TCall } from "@polkadot/types/interfaces";
 import { EventRecord, Event } from '@polkadot/types/interfaces';
 import { SubstrateExtrinsic } from "@subql/types";
 import { Codec } from '@polkadot/types/types';
-import { BasicExtrinsicData, Collection, Token } from './types';
-import { isCreateCollection, isCreateToken, isTokenClassCreated, isTokenMinted } from './helpers';
+import { BasicExtrinsicData, Collection, Interaction, Token } from './types';
+import { createTokenId, isCreateCollection, isCreateToken, isTokenClassCreated, isTokenMinted, tokenIdOf } from './helpers';
 
 export const log = (title: string, arg: any) => logger.info(`[${title}] ${JSON.stringify(arg, null, 2)}` )
 
@@ -81,5 +81,26 @@ export const processToken = (extrinsic: SubstrateExtrinsic): Token => {
     metadata: args[1],
     collectionId: args[0],
   }
+}
 
+export const processTransfer = (extrinsic: SubstrateExtrinsic): Interaction => {
+  const data = getBasicData(extrinsic);
+  const args = getArgs(extrinsic.extrinsic.args);
+
+  return {
+    ...data,
+    id: tokenIdOf(args[1]),
+    value: args[0],
+  }
+}
+
+export const processBurn = (extrinsic: SubstrateExtrinsic): Interaction => {
+  const data = getBasicData(extrinsic);
+  const args = getArgs(extrinsic.extrinsic.args);
+
+  return {
+    ...data,
+    id: tokenIdOf(args[0]),
+    value: ''
+  }
 }

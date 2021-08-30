@@ -96,6 +96,18 @@ definitions:
             module: nft
             method: mint
             success: true
+      - handler: handleBurn
+        kind: substrate/CallHandler
+        filter:
+            module: nft
+            method: burn
+            success: true
+      - handler: handleTransfer
+        kind: substrate/CallHandler
+        filter:
+            module: nft
+            method: transfer
+            success: true
 dataSources:
   - name: main
     kind: substrate/Runtime
